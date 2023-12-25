@@ -1,0 +1,22 @@
+{
+  "name": "praticecli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev-link": "npm install -g",
+    "dev-unlink": "npm uninstall -g",
+    "link-cli": "npm unlink praticecli && npm link praticecli",
+    "dev": "tsc -w"
+  },
+  "bin": {
+    "run-lang": "./dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "typescript": "^5.3.3"
+  }
+}
