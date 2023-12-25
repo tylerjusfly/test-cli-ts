@@ -1,0 +1,14 @@
+{
+  "name": "javascript-template",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Tylerjusfly",
+  "license": "ISC",
+  "description": " a cli for language translation",
+  "dependencies": {},
+  "devDependencies": {}
+}

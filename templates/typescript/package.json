@@ -1,0 +1,14 @@
+{
+  "name": "typescript-template",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Tylerjusfly",
+  "license": "ISC",
+  "description": " a template for typescript",
+  "dependencies": {},
+  "devDependencies": {}
+}
