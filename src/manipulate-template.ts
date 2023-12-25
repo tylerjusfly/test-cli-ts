@@ -3,6 +3,9 @@ import fs from "fs";
 import ncp from "ncp";
 import path from "path";
 import { promisify } from "util";
+import { execa } from "execa";
+import Listr from "listr";
+import { projectInstall } from "pkg-install";
 
 interface IcopyTemplateFiles {
   templateDirectory: string;
@@ -28,6 +31,17 @@ async function copyTemplateFiles(options: IcopyTemplateFiles) {
   });
 }
 
+async function initGit(options: { targetDirectory: string }) {
+  const result = await execa("git", ["init"], {
+    cwd: options.targetDirectory,
+  });
+
+  if (result.failed) {
+    return Promise.reject(new Error("Failed to initialize Git"));
+  }
+  return;
+}
+
 export async function createProject(options: IcreateProject) {
   // create in thier specified dircetory or create project in the current working directory
   options = {
@@ -35,11 +49,11 @@ export async function createProject(options: IcreateProject) {
     targetDirectory: options.targetDirectory || process.cwd(),
   };
 
-  const currentFileUrl = new URL("file://" + path.resolve(__filename));
+  //   const currentFileUrl = new URL("file://" + path.resolve(__filename));
+  const currentFileUrl = new URL(import.meta.url);
 
   const newUrl = currentFileUrl.pathname.substring(currentFileUrl.pathname.indexOf("/") + 1);
 
-  //   const currentFileUrl = import.meta.url;
   const templateDir = path.resolve(newUrl, "../../templates", options.template.toLowerCase());
 
   options.templateDirectory = templateDir;
@@ -55,9 +69,27 @@ export async function createProject(options: IcreateProject) {
     process.exit(1);
   }
 
-  console.log("Copying project files...");
+  const tasks = new Listr([
+    {
+      title: "Copy project files",
+      task: () => copyTemplateFiles(options),
+    },
+    {
+      title: "Initialize git",
+      task: () => initGit({ targetDirectory: options.targetDirectory }),
+      enabled: () => options.git,
+    },
+    {
+      title: "Install dependencies",
+      task: () =>
+        projectInstall({
+          cwd: options.targetDirectory,
+        }),
+      skip: () => (!options.runInstall ? "Pass --install to automatically install dependencies" : undefined),
+    },
+  ]);
 
-  await copyTemplateFiles(options);
+  await tasks.run();
 
   console.log("%s Project ready", chalk.green.bold("DONE"));
 
