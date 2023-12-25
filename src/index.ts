@@ -1,5 +1,13 @@
 #!/usr/bin/env node
 
-const sayHello = (val: string) => {};
+import { parseArgumentsIntoOptions, promptForMissingOptions } from "./cli";
 
-console.log("Hello world and Merry christmas");
+export async function cli(args: string[]) {
+  let options = parseArgumentsIntoOptions(args);
+
+  options = await promptForMissingOptions(options);
+
+  console.log(options);
+}
+
+cli(process.argv);
