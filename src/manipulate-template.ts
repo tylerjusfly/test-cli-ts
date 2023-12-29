@@ -4,6 +4,7 @@ import ncp from "ncp";
 import path from "path";
 import { promisify } from "util";
 import { execa } from "execa";
+import { mkdirp } from "mkdirp";
 import Listr from "listr";
 import { projectInstall } from "pkg-install";
 
@@ -20,6 +21,7 @@ export interface IcreateProject {
   template: string;
   templateDirectory: string;
   targetDirectory: string;
+  folderName: string;
 }
 
 const access = promisify(fs.access);
@@ -44,9 +46,21 @@ async function initGit(options: { targetDirectory: string }) {
 
 export async function createProject(options: IcreateProject) {
   // create in thier specified dircetory or create project in the current working directory
+
+  const currentWorkDir = options.targetDirectory || process.cwd();
+
+  const made = mkdirp.sync(`${currentWorkDir}/${options.folderName}`);
+
+  if (made === undefined) {
+    console.error(`%s Error creating project name`, chalk.red.bold("FOLDER ERROR"));
+    process.exit(1);
+  }
+
+  console.log(`created project folder, starting with ${made}`);
+
   options = {
     ...options,
-    targetDirectory: options.targetDirectory || process.cwd(),
+    targetDirectory: made,
   };
 
   //   const currentFileUrl = new URL("file://" + path.resolve(__filename));

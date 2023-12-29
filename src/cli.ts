@@ -5,6 +5,7 @@ interface PropsOption {
   skipPrompts: boolean;
   template: string | undefined;
   git: boolean;
+  folderName: string | undefined;
   runInstall: boolean;
 }
 
@@ -29,6 +30,7 @@ export function parseArgumentsIntoOptions(rawArgs: string[]) {
     skipPrompts: args["--yes"] || false,
     git: args["--git"] || false,
     template: args._[0],
+    folderName: args._[1],
     runInstall: args["--install"] || false,
   };
 }
@@ -43,6 +45,14 @@ export async function promptForMissingOptions(options: PropsOption) {
 
   // ask user questions
   const questions: prompts.PromptObject<string> | prompts.PromptObject<string>[] = [];
+
+  if (!options.folderName) {
+    questions.push({
+      type: "text",
+      name: "folderName",
+      message: "Please enter server name",
+    });
+  }
 
   if (!options.template) {
     questions.push({
@@ -72,5 +82,6 @@ export async function promptForMissingOptions(options: PropsOption) {
     ...options,
     template: options.template || answers.template,
     git: options.git || answers.git,
+    folderName: options.folderName || answers.folderName,
   };
 }
