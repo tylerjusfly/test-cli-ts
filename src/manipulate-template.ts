@@ -4,9 +4,11 @@ import ncp from "ncp";
 import path from "path";
 import { promisify } from "util";
 import { execa } from "execa";
-import { mkdirp } from "mkdirp";
+
 import Listr from "listr";
 import { projectInstall } from "pkg-install";
+
+// import { rename } from "node:fs/promises";
 
 interface IcopyTemplateFiles {
   templateDirectory: string;
@@ -47,21 +49,29 @@ async function initGit(options: { targetDirectory: string }) {
 export async function createProject(options: IcreateProject) {
   // create in thier specified dircetory or create project in the current working directory
 
+  let defaultFolderName = "node-kit";
+
   const currentWorkDir = options.targetDirectory || process.cwd();
 
-  const made = mkdirp.sync(`${currentWorkDir}/${options.folderName}`);
+  let pathToCreate = `${currentWorkDir}/${options.folderName ? options.folderName : defaultFolderName}`;
 
-  if (made === undefined) {
-    console.error(`%s Error creating project name`, chalk.red.bold("FOLDER ERROR"));
+  if (!fs.existsSync(pathToCreate)) {
+    fs.mkdirSync(pathToCreate);
+    console.log(`created project folder, starting with ${pathToCreate}`);
+  } else {
+    console.error(
+      `%s There is a duplicate folder with the name ${options.folderName || defaultFolderName}`,
+      chalk.red.bold("DUPLICATE ERROR")
+    );
     process.exit(1);
   }
 
-  console.log(`created project folder, starting with ${made}`);
-
   options = {
     ...options,
-    targetDirectory: made,
+    targetDirectory: pathToCreate,
   };
+
+  // const anewd = await rename(made, `${currentWorkDir}/renamed`);
 
   //   const currentFileUrl = new URL("file://" + path.resolve(__filename));
   const currentFileUrl = new URL(import.meta.url);
@@ -72,9 +82,7 @@ export async function createProject(options: IcreateProject) {
 
   options.templateDirectory = templateDir;
 
-  //   console.log("Current Directory:", templateDir);
-
-  //   check if path exists
+  // check if path exists
   try {
     await access(templateDir, fs.constants.R_OK);
   } catch (error) {
