@@ -7,6 +7,7 @@ interface PropsOption {
   git: boolean;
   folderName: string | undefined;
   runInstall: boolean;
+  version: boolean;
 }
 
 const defaultTemplate = "JavaScript";
@@ -17,9 +18,11 @@ export function parseArgumentsIntoOptions(rawArgs: string[]) {
       "--git": Boolean,
       "--yes": Boolean,
       "--install": Boolean,
+      "--version": Boolean,
       "-g": "--git",
       "-y": "--yes",
       "-i": "--install",
+      "-v": "--version",
     },
     {
       argv: rawArgs.slice(2),
@@ -28,6 +31,7 @@ export function parseArgumentsIntoOptions(rawArgs: string[]) {
 
   return {
     skipPrompts: args["--yes"] || false,
+    version: args["--version"] || false,
     git: args["--git"] || false,
     template: args._[0],
     folderName: args._[1],

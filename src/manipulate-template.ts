@@ -7,6 +7,7 @@ import { execa } from "execa";
 
 import Listr from "listr";
 import { projectInstall } from "pkg-install";
+import { isLinux, isMac } from "./utils/constants.js";
 
 // import { rename } from "node:fs/promises";
 
@@ -64,6 +65,7 @@ export async function createProject(options: IcreateProject) {
       chalk.red.bold("DUPLICATE ERROR")
     );
     process.exit(1);
+    // pathToCreate = `${currentWorkDir}/${defaultFolderName}-1`;
   }
 
   options = {
@@ -76,7 +78,13 @@ export async function createProject(options: IcreateProject) {
   //   const currentFileUrl = new URL("file://" + path.resolve(__filename));
   const currentFileUrl = new URL(import.meta.url);
 
-  const newUrl = currentFileUrl.pathname.substring(currentFileUrl.pathname.indexOf("/") + 1);
+  let newUrl;
+
+  if (isLinux || isMac) {
+    newUrl = currentFileUrl.pathname;
+  } else {
+    newUrl = currentFileUrl.pathname.substring(currentFileUrl.pathname.indexOf("/") + 1);
+  }
 
   const templateDir = path.resolve(newUrl, "../../templates", options.template.toLowerCase());
 
