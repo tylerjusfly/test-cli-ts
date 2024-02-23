@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/code-collabo/node-mongo-cli.git"
+    "url": "https://github.com/tylerjusfly/test-cli-ts"
   },
   "keywords": [
     "test",
