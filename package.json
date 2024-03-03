@@ -24,6 +24,7 @@
     "test",
     "cli"
   ],
+  "homepage": "https://github.com/tylerjusfly/test-cli-ts#readme",
   "author": "Tylerjusfly",
   "license": "MIT",
   "devDependencies": {
